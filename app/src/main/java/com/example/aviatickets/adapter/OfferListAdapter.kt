@@ -2,24 +2,29 @@ package com.example.aviatickets.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.aviatickets.R
 import com.example.aviatickets.databinding.ItemOfferBinding
 import com.example.aviatickets.model.entity.Offer
 
-class OfferListAdapter : RecyclerView.Adapter<OfferListAdapter.ViewHolder>() {
+class OfferListAdapter : ListAdapter<Offer, OfferListAdapter.ViewHolder>(DiffUtils()) {
 
     private val items: ArrayList<Offer> = arrayListOf()
+    class DiffUtils: DiffUtil.ItemCallback<Offer>(){
+        override fun areItemsTheSame(oldItem: Offer, newItem: Offer): Boolean {
+            return oldItem.id == newItem.id
+        }
 
-    fun setItems(offerList: List<Offer>) {
-        items.clear()
-        items.addAll(offerList)
-        notifyDataSetChanged()
+        override fun areContentsTheSame(oldItem: Offer, newItem: Offer): Boolean {
+            return oldItem == newItem
+        }
 
-        /**
-         * think about recycler view optimization using diff.util
-         */
     }
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return ViewHolder(
@@ -31,12 +36,8 @@ class OfferListAdapter : RecyclerView.Adapter<OfferListAdapter.ViewHolder>() {
         )
     }
 
-    override fun getItemCount(): Int {
-        return items.size
-    }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(items[position])
+        holder.bind(getItem(position))
     }
 
     inner class ViewHolder(
@@ -63,6 +64,7 @@ class OfferListAdapter : RecyclerView.Adapter<OfferListAdapter.ViewHolder>() {
                 )
                 direct.text = context.getString(R.string.direct)
                 price.text = context.getString(R.string.price_fmt, offer.price.toString())
+
             }
         }
 
